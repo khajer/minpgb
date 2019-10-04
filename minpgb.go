@@ -6,6 +6,13 @@ import (
 
 var pgb *MinPgb
 
+const (
+	MAX_PERCENT float64 = 100
+	CH_RESET_LINE string = "\r\033[K"	
+)
+	
+
+
 type MinPgb struct{
 	Curr 	int
 	Total 	int
@@ -25,10 +32,15 @@ func (pgb *MinPgb)GetCurrent() int{
 func (pgb *MinPgb)SetCurrent(curr int){
 	pgb.Curr = curr
 
-	fmt.Print("\r\033[K")	
-	percent := float64(pgb.Curr)/float64(pgb.Total)*100	
+	fmt.Print(CH_RESET_LINE)	
+	percent := float64(pgb.Curr)/float64(pgb.Total)*MAX_PERCENT	
 	s := CreateProgressText(pgb.Curr, pgb.Total)
-	fmt.Printf("[%d/%d] %s %.2f%s", pgb.Curr, pgb.Total, s, percent, "%")
+	sEnd := "%"
+	if percent >= MAX_PERCENT{
+		sEnd += "\n"
+	}
+	fmt.Printf("[%d/%d] %s %.2f%s", pgb.Curr, pgb.Total, s, percent, sEnd)
+	
 	
 }
 func CreateProgressText(curr int, total int) string{

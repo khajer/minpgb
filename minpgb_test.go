@@ -2,15 +2,14 @@ package minpgb
 
 import (
 	"testing"
-	// "github.com/stretchr/testify/assert"
 	"time"
+	"fmt"
 )
 
 
 func TestSimpleProgressBar(t *testing.T){
 	pgb := New()
 	if pgb != nil{
-		// assert.Equal(t, "x", "x")
 	}
 
 	pgb.Total = 20
@@ -19,7 +18,8 @@ func TestSimpleProgressBar(t *testing.T){
 	for i:=0; i< 20; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+1)
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 	}
+	fmt.Println("completed")
 
 }
