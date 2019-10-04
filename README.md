@@ -1,6 +1,9 @@
 # minpgb
 minpgb is a mini progress bar cli 
 
+## install 
+``` go get github.com/khajer/minpgb ```
+
 ## example
 ```
 package main
@@ -8,7 +11,6 @@ package main
 import (
 	pgb "github.com/khajer/minpgb"
 	"time"
-	"fmt"
 )
 
 func main(){
