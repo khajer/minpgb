@@ -3,17 +3,23 @@ minpgb is a mini progress bar cli
 
 ## example
 ```
-  pgb := New()
-	if pgb != nil{
-		// assert.Equal(t, "x", "x")
+package main
+
+import (
+	pgb "github.com/khajer/minpgb"
+	"time"
+	"fmt"
+)
+
+func main(){
+	pb := pgb.New()
+	pb.Total = 100
+
+	for i:=0; i< 100; i++{
+		curr := pb.GetCurrent()
+		pb.SetCurrent(curr+1)
+		time.Sleep(100 * time.Millisecond)
 	}
 
-	pgb.Total = 20
-	pgb.SetCurrent(0)
-
-	for i:=0; i< 20; i++{
-		curr := pgb.GetCurrent()
-		pgb.SetCurrent(curr+1)
-		time.Sleep(1 * time.Second)
-	}
+}
 ```
