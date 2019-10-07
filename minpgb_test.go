@@ -35,7 +35,7 @@ func TestSimpleProgressBarFlush(t *testing.T){
 		pgb.SetCurrent(curr+10)
 		time.Sleep(100 * time.Millisecond)
 	}
-	Flush()
+	pgb.Flush()
 	fmt.Println("completed")
 }
 
@@ -88,7 +88,7 @@ func TestProgressBarMore501AndWithFush(t *testing.T){
 		pgb.SetCurrent(curr+10)
 		time.Sleep(100 * time.Millisecond)
 	}
-	Flush()
+	pgb.Flush()
 	fmt.Println("completed")
 }
 
