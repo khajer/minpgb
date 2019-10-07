@@ -48,7 +48,7 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 	fmt.Printf("%s%s%s", strHead, sProgress, strEnd)
 		
 }
-func Flush(){
+func (pgb *MinPgb)Flush(){
 	fmt.Print(CH_RESET_LINE)
 }
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
