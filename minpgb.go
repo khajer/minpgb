@@ -41,7 +41,11 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 		
 	strHead := fmt.Sprintf("[%.0f/%.0f] ", pgb.Curr, pgb.Total)
 	strEnd := fmt.Sprintf(" %.2f%s", currPercent, "%")
-	pgbWidth := int(winsize.Col) - (len(strHead)+len(strHead))
+	col := uint16(MAX_PERCENT)
+	if winsize != nil{
+		col = winsize.Col
+	}
+	pgbWidth := int(col) - (len(strHead)+len(strHead))
 
 	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))
 	
