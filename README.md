@@ -2,7 +2,7 @@
 minpgb is a mini progress bar cli 
 
 ## install 
-``` go get github.com/khajer/minpgb ```
+``` go get -u github.com/khajer/minpgb ```
 
 ## example
 ```
