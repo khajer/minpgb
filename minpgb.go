@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/sys/unix"
 	"os"
+	"strings"
 )
 
 var pgb *MinPgb
@@ -56,16 +57,16 @@ func (pgb *MinPgb)Flush(){
 	fmt.Print(CH_RESET_LINE)
 }
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
-
-	s := "["
-	for i:=1; i<= CallTextAppend(txtWidth, totalPercent); i++ {
-		if i <= CallTextAppend(txtWidth, currPercent){
-			s += "#"	
-		}else{
-			s += " "
-		}		
-	}
-	s += "]"
+	s := ""
+	markCh := "#"
+	if currPercent <= totalPercent {
+		curr := strings.Repeat(markCh, CallTextAppend(txtWidth, currPercent))
+		remain := strings.Repeat(" ", CallTextAppend(txtWidth, totalPercent-currPercent))
+		s = "["+curr+remain+"]"	
+	}else{
+		total := strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
+		s = "["+total+"]"	
+	}	
 	return s
 }
 /*
