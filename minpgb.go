@@ -59,9 +59,11 @@ func (pgb *MinPgb)Flush(){
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
 	s := ""
 	markCh := "#"
+	remainCh := " "
+	
 	if currPercent <= totalPercent {
 		curr := strings.Repeat(markCh, CallTextAppend(txtWidth, currPercent))
-		remain := strings.Repeat(" ", CallTextAppend(txtWidth, totalPercent-currPercent))
+		remain := strings.Repeat(remainCh, CallTextAppend(txtWidth, totalPercent-currPercent))
 		s = "["+curr+remain+"]"	
 	}else{
 		total := strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
