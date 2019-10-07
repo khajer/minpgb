@@ -2,9 +2,12 @@ package minpgb
 
 import (
 	"fmt"
+	"golang.org/x/sys/unix"
+	"os"
 )
 
 var pgb *MinPgb
+var winsize *unix.Winsize
 
 const (
 	MAX_PERCENT float64 = 100
@@ -14,11 +17,12 @@ const (
 
 
 type MinPgb struct{
-	Curr 	int
-	Total 	int
+	Curr 	float64
+	Total 	float64
 }
 func init(){
 	pgb = New()
+	winsize = GetWinsize()
 }
 
 func New() *MinPgb{
@@ -26,27 +30,32 @@ func New() *MinPgb{
 	return pg
 }
 
-func (pgb *MinPgb)GetCurrent() int{
+func (pgb *MinPgb)GetCurrent() float64{
 	return pgb.Curr
 }
-func (pgb *MinPgb)SetCurrent(curr int){
+func (pgb *MinPgb)SetCurrent(curr float64){
 	pgb.Curr = curr
 
 	fmt.Print(CH_RESET_LINE)	
-	percent := float64(pgb.Curr)/float64(pgb.Total)*MAX_PERCENT	
-	s := CreateProgressText(pgb.Curr, pgb.Total)
-	sEnd := "%"
-	if percent >= MAX_PERCENT{
-		sEnd += "\n"
-	}
-	fmt.Printf("[%d/%d] %s %.2f%s", pgb.Curr, pgb.Total, s, percent, sEnd)
+	currPercent := pgb.Curr/pgb.Total*MAX_PERCENT	
+		
+	strHead := fmt.Sprintf("[%.0f/%.0f] ", pgb.Curr, pgb.Total)
+	strEnd := fmt.Sprintf(" %.2f%s", currPercent, "%")
+	pgbWidth := int(winsize.Col) - (len(strHead)+len(strHead))
+
+	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))
 	
-	
+	fmt.Printf("%s%s%s", strHead, sProgress, strEnd)
+		
 }
-func CreateProgressText(curr int, total int) string{
+func Flush(){
+	fmt.Print(CH_RESET_LINE)
+}
+func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
+
 	s := "["
-	for i:=1; i<= total; i++ {
-		if i <= curr{
+	for i:=1; i<= CallTextAppend(txtWidth, totalPercent); i++ {
+		if i <= CallTextAppend(txtWidth, currPercent){
 			s += "#"	
 		}else{
 			s += " "
@@ -55,3 +64,25 @@ func CreateProgressText(curr int, total int) string{
 	s += "]"
 	return s
 }
+/*
+// unix.Winsize 
+type Winsize struct {
+    Row    uint16
+    Col    uint16
+    Xpixel uint16
+    Ypixel uint16
+}
+*/
+func GetWinsize() *unix.Winsize{
+	ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
+	if err != nil {
+		return nil
+	}
+	return ws 
+}
+func CallTextAppend(txtLen float64, percent float64) int{
+	v := (percent/100)*txtLen
+	return int(v)
+
+}
+
