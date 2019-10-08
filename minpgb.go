@@ -5,6 +5,7 @@ import (
 	"golang.org/x/sys/unix"
 	"os"
 	"strings"
+
 )
 
 var pgb *MinPgb
@@ -14,8 +15,6 @@ const (
 	MAX_PERCENT float64 = 100
 	CH_RESET_LINE string = "\r\033[K"	
 )
-	
-
 
 type MinPgb struct{
 	Curr 	float64
@@ -59,9 +58,11 @@ func (pgb *MinPgb)Flush(){
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
 	s := ""
 	markCh := "#"
-	if currPercent <= totalPercent {
+	remainCh := " "	
+	
+	if currPercent < totalPercent {
 		curr := strings.Repeat(markCh, CallTextAppend(txtWidth, currPercent))
-		remain := strings.Repeat(" ", CallTextAppend(txtWidth, totalPercent-currPercent))
+		remain := strings.Repeat(remainCh, int(txtWidth)-len(curr))
 		s = "["+curr+remain+"]"	
 	}else{
 		total := strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
@@ -85,9 +86,7 @@ func GetWinsize() *unix.Winsize{
 	}
 	return ws 
 }
-func CallTextAppend(txtLen float64, percent float64) int{
+func CallTextAppend(txtLen float64, percent float64) int{	
 	v := (percent/100)*txtLen
 	return int(v)
-
 }
-
