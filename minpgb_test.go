@@ -9,7 +9,6 @@ import (
 	// "os"
 )
 
-
 func TestSimpleProgressBar(t *testing.T){
 	pgb := New()
 	if pgb != nil{
@@ -47,6 +46,25 @@ func TestGetWinsize(t *testing.T){
 	}
 	// fmt.Println(ws)
 }
+
+func TestProgressBarLength(t *testing.T){
+	for i:=0; i<100; i++{
+		str := CreateProgressText(float64(i), 100, 100)	
+		if len(str) != 102 {
+			t.Errorf("fails ")
+		}
+	}	
+
+	// str := CreateProgressText(71,100, 100)
+	// fmt.Println(str, len(str))
+}
+
+// func TestCallTextAppend(t *testing.T){
+// 	for i:=0; i<100; i++{
+// 		d := CallTextAppend(float64(50), float64(i))
+// 	}	
+// }
+
 func TestPercentTextAppend(t *testing.T){
 	if 50 != CallTextAppend(100, 50){
 		t.Errorf("Calculate Value Fails ")
@@ -91,7 +109,6 @@ func TestProgressBarMore501AndWithFush(t *testing.T){
 	pgb.Flush()
 	fmt.Println("completed")
 }
-
 
 func TestCreateProgressText(t *testing.T){
 	txtLen100percent := 50.00
