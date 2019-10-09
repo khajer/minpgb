@@ -15,7 +15,7 @@ func TestSimpleProgressBarType0(t *testing.T){
 	for i:=0; i< 100; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+10)
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	pgb.Flush()
 	fmt.Println("Completed")
@@ -24,7 +24,7 @@ func TestSimpleProgressBarType0(t *testing.T){
 	for i:=0; i< 100; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+10)
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	pgb.Flush()
 	fmt.Println("completed")
@@ -39,7 +39,7 @@ func TestSimpleProgressBar(t *testing.T){
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+10)
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	fmt.Println("completed")
 }
@@ -53,7 +53,7 @@ func TestSimpleProgressBarFlush(t *testing.T){
 	for i:=0; i< 100; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+1)
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	pgb.Flush()
 	fmt.Println("completed")
@@ -77,7 +77,7 @@ func TestProgressBarLength(t *testing.T){
 	}	
 }
 
-func TestPercentTextAppend(t *testing.T){
+func TestCallTextAppend(t *testing.T){
 	if 50 != CallTextAppend(100, 50){
 		t.Errorf("Calculate Value Fails ")
 	}
@@ -100,7 +100,7 @@ func TestProgressBarMore500(t *testing.T){
 	for i:=0; i< 53; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+10)
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	fmt.Println("completed")
 }
@@ -116,7 +116,7 @@ func TestProgressBarMore501AndWithFush(t *testing.T){
 	for i:=0; i< 53; i++{
 		curr := pgb.GetCurrent()
 		pgb.SetCurrent(curr+10)
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 	pgb.Flush()
 	fmt.Println("completed")
@@ -133,4 +133,40 @@ func TestCreateProgressText(t *testing.T){
 	if len(s) != int(txtLen100percent)+2{
 		t.Errorf("Length txt error , curr len = %d", len(s))
 	}
+}
+
+func TestCreatePreLoadingText(t *testing.T){
+	
+	str := CreatePreLoadingText("readme.txt", 100, 100)
+	if str != "readme.txt [100/100]" {
+		t.Errorf("String Prefix error : '%s'", str)
+	}
+
+}
+func TestShowPreloadingText(t *testing.T){
+	pgb := New()
+	if pgb != nil{
+	}
+	filename := "readme.txt"
+	pgb.SetPreText(filename)
+	pgb.Total =  100
+	pgb.SetCurrent(0)
+	for i:=0; i< 100; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+1)
+		time.Sleep(10 * time.Millisecond)
+	}
+	pgb.Flush()
+	fmt.Printf("'%s': download completed\n", filename)
+	filename = "main.go"
+
+	pgb.SetPreText(filename)
+	for i:=0; i< 100; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+1)
+		time.Sleep(10 * time.Millisecond)
+	}
+	pgb.Flush()
+	fmt.Printf("'%s': download completed\n", filename)
+
 }

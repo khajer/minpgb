@@ -10,11 +10,12 @@ import (
 
 var pgb *MinPgb
 var winsize *unix.Winsize
-var PgType int
+var pgType int
 var pgTypeList []ProgressbarType
+var pgPreText string
 
 type ProgressbarType struct {
-	MarkCh,Seperator,RemainCh 		string
+	MarkCh, Seperator, RemainCh 		string
 }
 
 const (
@@ -26,8 +27,7 @@ const (
 )
 
 type MinPgb struct{
-	Curr 	float64
-	Total 	float64
+	Curr, Total 	float64
 }
 
 func init(){
@@ -35,7 +35,8 @@ func init(){
 	winsize = GetWinsize()
 
 	CreateProgressTypeList()	
-	PgType = PGTYPE_NORMAL
+	pgType = PGTYPE_NORMAL
+	pgPreText = ""
 	
 }
 
@@ -68,19 +69,21 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 	fmt.Print(CH_RESET_LINE)	
 	currPercent := pgb.Curr/pgb.Total*MAX_PERCENT	
 		
-	strHead := fmt.Sprintf("[%.0f/%.0f] ", pgb.Curr, pgb.Total)
-	strEnd := fmt.Sprintf(" %.2f%s", currPercent, "%")
+	strHead := CreatePreLoadingText(pgPreText, pgb.Curr, pgb.Total)
+	strEnd := fmt.Sprintf(" %2.2f%s", currPercent, "%")
 
 	col := uint16(MAX_PERCENT)
 	if winsize != nil{
 		col = winsize.Col
 	}
-	pgbWidth := int(col) - (len(strHead)+len(strHead))
+	spacer := 3
+	pgbWidth := int(col) - (len(strHead)+len(strHead)+spacer) 
 
-	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))
-	
-	fmt.Printf("%s%s%s", strHead, sProgress, strEnd)
-		
+	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))	
+	fmt.Printf("%s %s %s", strHead, sProgress, strEnd)		
+}
+func (pgb *MinPgb)SetPreText(pretext string){
+	pgPreText = pretext
 }
 func (pgb *MinPgb)Flush(){
 	fmt.Print(CH_RESET_LINE)
@@ -88,12 +91,13 @@ func (pgb *MinPgb)Flush(){
 }
 
 func (pgb *MinPgb)SetStyle(styleID int){
-	PgType = styleID
+	pgType = styleID
 }
+
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
 	s := ""
 	currTxt := ""
-	seperator := pgTypeList[PgType].Seperator
+	seperator := pgTypeList[pgType].Seperator
 	remainTxt := ""
 		
 	if currPercent < totalPercent {
@@ -102,11 +106,11 @@ func CreateProgressText(currPercent float64, totalPercent float64, txtWidth floa
 			curCnt -= len(seperator)
 			if curCnt < 0 {curCnt = 0}
 		}
-		currTxt = strings.Repeat(pgTypeList[PgType].MarkCh, curCnt)					
+		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, curCnt)					
 		remainCnt := int(txtWidth) - (len(currTxt) + len(seperator))
-		remainTxt = strings.Repeat(pgTypeList[PgType].RemainCh, remainCnt)		
+		remainTxt = strings.Repeat(pgTypeList[pgType].RemainCh, remainCnt)		
 	}else{
-		currTxt = strings.Repeat(pgTypeList[PgType].MarkCh, int(txtWidth))
+		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, int(txtWidth))
 		seperator = ""		
 	}	
 	s = "["+currTxt+seperator+remainTxt+"]"	
@@ -123,4 +127,11 @@ func GetWinsize() *unix.Winsize{
 func CallTextAppend(txtLen float64, percent float64) int{	
 	v := (percent/100)*txtLen
 	return int(v)
+}
+
+func CreatePreLoadingText(pretext string, curr float64, total float64) string{
+	if len(pretext) > 0 {
+		pretext += " "
+	}
+	return fmt.Sprintf("%s[%.0f/%.0f]", pretext, curr, total)
 }
