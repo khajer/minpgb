@@ -10,19 +10,51 @@ import (
 
 var pgb *MinPgb
 var winsize *unix.Winsize
+var PgType int
+var pgTypeList []ProgressbarType
+
+type ProgressbarType struct {
+	MarkCh,Seperator,RemainCh 		string
+}
+
 
 const (
 	MAX_PERCENT float64 = 100
 	CH_RESET_LINE string = "\r\033[K"	
+
+	PGTYPE_NORMAL = 0
+	PGTYPE_DASH = 1
 )
+
 
 type MinPgb struct{
 	Curr 	float64
 	Total 	float64
 }
+
+
 func init(){
 	pgb = New()
 	winsize = GetWinsize()
+
+	CreateProgressTypeList()	
+	PgType = PGTYPE_NORMAL
+
+	
+}
+func CreateProgressTypeList(){
+	pgTypeList = []ProgressbarType{
+		ProgressbarType{
+			MarkCh:"=",
+			Seperator:">",
+			RemainCh:" ",
+		},
+		ProgressbarType{
+			MarkCh:"#",
+			Seperator:"#",
+			RemainCh:" ",
+		},
+	}
 }
 
 func New() *MinPgb{
@@ -54,16 +86,40 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 }
 func (pgb *MinPgb)Flush(){
 	fmt.Print(CH_RESET_LINE)
+	pgb.Curr = 0
+}
+
+func (pgb *MinPgb)SetStyle(styleID int){
+	PgType = styleID
 }
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
 	s := ""
-	markCh := "#"
-	remainCh := " "	
+	remainTxt := ""
+
+	// markCh := "="
+	// seperator := ">"
+	// remainCh := " "	
+	
+	markCh := pgTypeList[PgType].MarkCh
+	seperator := pgTypeList[PgType].Seperator
+	remainCh := pgTypeList[PgType].RemainCh
 	
 	if currPercent < totalPercent {
-		curr := strings.Repeat(markCh, CallTextAppend(txtWidth, currPercent))
-		remain := strings.Repeat(remainCh, int(txtWidth)-len(curr))
-		s = "["+curr+remain+"]"	
+
+		curCnt := CallTextAppend(txtWidth, currPercent)-len(seperator)
+		curr := ""
+		if curCnt > 0{
+			curr = strings.Repeat(markCh, curCnt)	
+		}		
+
+		totalRemainCnt := int(txtWidth) - (len(curr)+len(seperator))		
+								
+		if totalRemainCnt >= 0 {
+			remainTxt = strings.Repeat(remainCh, totalRemainCnt)	
+		}else{
+			remainTxt = strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
+		}		
+		s = "["+curr+seperator+remainTxt+"]"	
 	}else{
 		total := strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
 		s = "["+total+"]"	

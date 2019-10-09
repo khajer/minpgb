@@ -9,11 +9,36 @@ import (
 	// "os"
 )
 
-func TestSimpleProgressBar(t *testing.T){
+func TestSimpleProgressBarType0(t *testing.T){
 	pgb := New()
 	if pgb != nil{
 	}
 		
+
+	pgb.Total = 100;
+	for i:=0; i< 10; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+10)
+		time.Sleep(100 * time.Millisecond)
+	}
+	pgb.Flush()
+	fmt.Println("Completed")
+
+	pgb.SetStyle(PGTYPE_DASH)
+	for i:=0; i< 10; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+10)
+		time.Sleep(100 * time.Millisecond)
+	}
+	pgb.Flush()
+	fmt.Println("completed")
+}
+
+func TestSimpleProgressBar(t *testing.T){
+	pgb := New()
+	if pgb != nil{
+	}
+
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -29,9 +54,9 @@ func TestSimpleProgressBarFlush(t *testing.T){
 	}	
 	
 	pgb.Total = 100;
-	for i:=0; i< 10; i++{
+	for i:=0; i< 100; i++{
 		curr := pgb.GetCurrent()
-		pgb.SetCurrent(curr+10)
+		pgb.SetCurrent(curr+1)
 		time.Sleep(100 * time.Millisecond)
 	}
 	pgb.Flush()
