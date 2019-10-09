@@ -107,8 +107,7 @@ func CreateProgressText(currPercent float64, totalPercent float64, txtWidth floa
 		remainTxt = strings.Repeat(pgTypeList[PgType].RemainCh, remainCnt)		
 	}else{
 		currTxt = strings.Repeat(pgTypeList[PgType].MarkCh, int(txtWidth))
-		seperator = ""
-		remainTxt = ""
+		seperator = ""		
 	}	
 	s = "["+currTxt+seperator+remainTxt+"]"	
 	return s
