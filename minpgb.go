@@ -17,7 +17,6 @@ type ProgressbarType struct {
 	MarkCh,Seperator,RemainCh 		string
 }
 
-
 const (
 	MAX_PERCENT float64 = 100
 	CH_RESET_LINE string = "\r\033[K"	
@@ -26,12 +25,10 @@ const (
 	PGTYPE_DASH = 1
 )
 
-
 type MinPgb struct{
 	Curr 	float64
 	Total 	float64
 }
-
 
 func init(){
 	pgb = New()
@@ -39,9 +36,9 @@ func init(){
 
 	CreateProgressTypeList()	
 	PgType = PGTYPE_NORMAL
-
 	
 }
+
 func CreateProgressTypeList(){
 	pgTypeList = []ProgressbarType{
 		ProgressbarType{
@@ -73,6 +70,7 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 		
 	strHead := fmt.Sprintf("[%.0f/%.0f] ", pgb.Curr, pgb.Total)
 	strEnd := fmt.Sprintf(" %.2f%s", currPercent, "%")
+
 	col := uint16(MAX_PERCENT)
 	if winsize != nil{
 		col = winsize.Col
@@ -94,47 +92,28 @@ func (pgb *MinPgb)SetStyle(styleID int){
 }
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
 	s := ""
-	remainTxt := ""
-
-	// markCh := "="
-	// seperator := ">"
-	// remainCh := " "	
-	
-	markCh := pgTypeList[PgType].MarkCh
+	currTxt := ""
 	seperator := pgTypeList[PgType].Seperator
-	remainCh := pgTypeList[PgType].RemainCh
-	
+	remainTxt := ""
+		
 	if currPercent < totalPercent {
-
-		curCnt := CallTextAppend(txtWidth, currPercent)-len(seperator)
-		curr := ""
-		if curCnt > 0{
-			curr = strings.Repeat(markCh, curCnt)	
-		}		
-
-		totalRemainCnt := int(txtWidth) - (len(curr)+len(seperator))		
-								
-		if totalRemainCnt >= 0 {
-			remainTxt = strings.Repeat(remainCh, totalRemainCnt)	
-		}else{
-			remainTxt = strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
-		}		
-		s = "["+curr+seperator+remainTxt+"]"	
+		curCnt := CallTextAppend(txtWidth, currPercent)
+		if len(seperator) > 0{
+			curCnt -= len(seperator)
+			if curCnt < 0 {curCnt = 0}
+		}
+		currTxt = strings.Repeat(pgTypeList[PgType].MarkCh, curCnt)					
+		remainCnt := int(txtWidth) - (len(currTxt) + len(seperator))
+		remainTxt = strings.Repeat(pgTypeList[PgType].RemainCh, remainCnt)		
 	}else{
-		total := strings.Repeat(markCh, CallTextAppend(txtWidth, totalPercent))
-		s = "["+total+"]"	
+		currTxt = strings.Repeat(pgTypeList[PgType].MarkCh, int(txtWidth))
+		seperator = ""
+		remainTxt = ""
 	}	
+	s = "["+currTxt+seperator+remainTxt+"]"	
 	return s
 }
-/*
-// unix.Winsize 
-type Winsize struct {
-    Row    uint16
-    Col    uint16
-    Xpixel uint16
-    Ypixel uint16
-}
-*/
+
 func GetWinsize() *unix.Winsize{
 	ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
 	if err != nil {
