@@ -76,8 +76,8 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 	if winsize != nil{
 		col = winsize.Col
 	}
-	spacer := 3
-	pgbWidth := int(col) - (len(strHead)+len(strHead)+spacer) 
+	spacer := 4
+	pgbWidth := int(col) - (len(strHead)+len(strEnd)+spacer) 
 
 	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))	
 	fmt.Printf("%s %s %s", strHead, sProgress, strEnd)		
