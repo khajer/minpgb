@@ -15,7 +15,9 @@ var pgTypeList []ProgressbarType
 var pgPreText string
 
 type ProgressbarType struct {
-	MarkCh, Seperator, RemainCh 		string
+	MarkCh, Seperator, RemainCh string
+	BucketBegin, BucketEnd 		string
+	
 }
 
 const (
@@ -41,17 +43,25 @@ func init(){
 }
 
 func CreateProgressTypeList(){
-	pgTypeList = []ProgressbarType{
-		ProgressbarType{
-			MarkCh:"=",
-			Seperator:">",
-			RemainCh:" ",
-		},
-		ProgressbarType{
-			MarkCh:"#",
-			Seperator:"#",
-			RemainCh:" ",
-		},
+	var TYPE_PG = []string{
+		"[=> ]",			// PGTYPE_NORMAL
+		"[## ]",			// PGTYPE_DASH
+		"[-> ]",
+		"|++ |",
+	}	
+	pgTypeList = make([]ProgressbarType, len(TYPE_PG))
+
+	for i := 0; i < len(TYPE_PG); i++ {
+		if len(TYPE_PG[i]) == 5 {
+			pgTypeList[i] = ProgressbarType{
+				BucketBegin: TYPE_PG[i][0:1],
+				MarkCh:TYPE_PG[i][1:2],
+				Seperator:TYPE_PG[i][2:3],
+				RemainCh:TYPE_PG[i][3:4],		
+				BucketEnd:TYPE_PG[i][4:5],
+			}		
+		}
+		
 	}
 }
 
@@ -113,7 +123,7 @@ func CreateProgressText(currPercent float64, totalPercent float64, txtWidth floa
 		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, int(txtWidth))
 		seperator = ""		
 	}	
-	s = "["+currTxt+seperator+remainTxt+"]"	
+	s = pgTypeList[pgType].BucketBegin+currTxt+seperator+remainTxt+pgTypeList[pgType].BucketEnd
 	return s
 }
 
