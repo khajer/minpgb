@@ -112,26 +112,24 @@ func (pgb *MinPgb)SetStyle(styleID int){
 }
 
 func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
-	s := ""
 	currTxt := ""
-	seperator := pgTypeList[pgType].Seperator
+	seperator := ""
 	remainTxt := ""
-		
-	if currPercent < totalPercent {
+	
+	if currPercent > totalPercent {
+		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, int(txtWidth))
+	}else{
 		curCnt := CallTextAppend(txtWidth, currPercent)
-		if len(seperator) > 0{
-			curCnt -= len(seperator)
+		if len(pgTypeList[pgType].Seperator) > 0{
+			curCnt -= len(pgTypeList[pgType].Seperator)
 			if curCnt < 0 {curCnt = 0}
 		}
 		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, curCnt)					
-		remainCnt := int(txtWidth) - (len(currTxt) + len(seperator))
-		remainTxt = strings.Repeat(pgTypeList[pgType].RemainCh, remainCnt)		
-	}else{
-		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, int(txtWidth))
-		seperator = ""		
+		remainCnt := int(txtWidth) - (len(currTxt) + len(pgTypeList[pgType].Seperator))
+		remainTxt = strings.Repeat(pgTypeList[pgType].RemainCh, remainCnt)
+		seperator = pgTypeList[pgType].Seperator
 	}	
-	s = pgTypeList[pgType].BucketBegin+currTxt+seperator+remainTxt+pgTypeList[pgType].BucketEnd
-	return s
+	return pgTypeList[pgType].BucketBegin+currTxt+seperator+remainTxt+pgTypeList[pgType].BucketEnd	
 }
 
 func GetWinsize() *unix.Winsize{
