@@ -24,9 +24,13 @@ const (
 	MAX_PERCENT float64 = 100
 	CH_RESET_LINE string = "\r\033[K"	
 
-	PGTYPE_NORMAL = 0
-	PGTYPE_DASH = 1
+	PGTYPE_NORMAL int = 0
+	PGTYPE_DASH  int = 1
+	PGTYPE_ARROW int = 2
+	PGTYPE_PLUS int = 3
+	PGTYPE_ARROW2 int = 4
 )
+
 
 type MinPgb struct{
 	Curr, Total 	float64
@@ -43,12 +47,15 @@ func init(){
 }
 
 func CreateProgressTypeList(){
+
 	var TYPE_PG = []string{
 		"[=> ]",			// PGTYPE_NORMAL
 		"[## ]",			// PGTYPE_DASH
-		"[-> ]",
-		"|++ |",
-	}	
+		"[-> ]",			// PGTYPE_ARROW	
+		"|++ |",			// PGTYPE_PLUS	
+		"|=>.|",			// PGTYPE_ARROW2	
+	}
+
 	pgTypeList = make([]ProgressbarType, len(TYPE_PG))
 
 	for i := 0; i < len(TYPE_PG); i++ {
