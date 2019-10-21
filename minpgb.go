@@ -25,10 +25,8 @@ const (
 	CH_RESET_LINE string = "\r\033[K"	
 
 	PGTYPE_NORMAL int = 0
-	PGTYPE_DASH  int = 1
-	PGTYPE_ARROW int = 2
-	PGTYPE_PLUS int = 3
-	PGTYPE_ARROW2 int = 4
+	PGTYPE_BLOCK  int = 1
+
 )
 
 
@@ -43,33 +41,25 @@ func init(){
 	CreateProgressTypeList()	
 	pgType = PGTYPE_NORMAL
 	pgPreText = ""
-	
 }
 
 func CreateProgressTypeList(){
-
-	var TYPE_PG = []string{
-		"[=> ]",			// PGTYPE_NORMAL
-		"[## ]",			// PGTYPE_DASH
-		"[-> ]",			// PGTYPE_ARROW	
-		"|++ |",			// PGTYPE_PLUS	
-		"|=>.|",			// PGTYPE_ARROW2	
+	pgTypeList = make([]ProgressbarType, 2)
+	
+	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{
+		BucketBegin: "[",
+		MarkCh:"#",
+		Seperator:"",
+		RemainCh:" ",		
+		BucketEnd:"]",
 	}
-
-	pgTypeList = make([]ProgressbarType, len(TYPE_PG))
-
-	for i := 0; i < len(TYPE_PG); i++ {
-		if len(TYPE_PG[i]) == 5 {
-			pgTypeList[i] = ProgressbarType{
-				BucketBegin: TYPE_PG[i][0:1],
-				MarkCh:TYPE_PG[i][1:2],
-				Seperator:TYPE_PG[i][2:3],
-				RemainCh:TYPE_PG[i][3:4],		
-				BucketEnd:TYPE_PG[i][4:5],
-			}		
-		}
-		
-	}
+	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{
+		BucketBegin: "|",
+		MarkCh:"▓",
+		Seperator:"▒",
+		RemainCh:" ",		
+		BucketEnd:"|",
+	}					
 }
 
 func New() *MinPgb{
@@ -96,7 +86,7 @@ func (pgb *MinPgb)SetCurrent(curr float64){
 	spacer := 4
 	pgbWidth := int(col) - (len(strHead)+len(strEnd)+spacer) 
 
-	sProgress := CreateProgressText(currPercent, MAX_PERCENT, float64(pgbWidth))	
+	sProgress := CreateProgressText(currPercent, MAX_PERCENT, pgbWidth)	
 	fmt.Printf("%s %s %s", strHead, sProgress, strEnd)		
 }
 func (pgb *MinPgb)SetPreText(pretext string){
@@ -106,30 +96,37 @@ func (pgb *MinPgb)Flush(){
 	fmt.Print(CH_RESET_LINE)
 	pgb.Curr = 0
 }
+func (pgb *MinPgb)End(){
+	fmt.Println("")
+	pgb.Curr = 0
+}
 
 func (pgb *MinPgb)SetStyle(styleID int){
 	pgType = styleID
 }
 
-func CreateProgressText(currPercent float64, totalPercent float64, txtWidth float64) string{
-	currTxt := ""
-	seperator := ""
-	remainTxt := ""
+func CreateProgressText(currPercent float64, totalPercent float64, txtWidth int) string{
 	
-	if currPercent > totalPercent {
-		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, int(txtWidth))
-	}else{
-		curCnt := CallTextAppend(txtWidth, currPercent)
-		if len(pgTypeList[pgType].Seperator) > 0{
-			curCnt -= len(pgTypeList[pgType].Seperator)
-			if curCnt < 0 {curCnt = 0}
-		}
-		currTxt = strings.Repeat(pgTypeList[pgType].MarkCh, curCnt)					
-		remainCnt := int(txtWidth) - (len(currTxt) + len(pgTypeList[pgType].Seperator))
-		remainTxt = strings.Repeat(pgTypeList[pgType].RemainCh, remainCnt)
-		seperator = pgTypeList[pgType].Seperator
-	}	
-	return pgTypeList[pgType].BucketBegin+currTxt+seperator+remainTxt+pgTypeList[pgType].BucketEnd	
+	beginTxt := pgTypeList[pgType].BucketBegin
+	chCurrent := pgTypeList[pgType].MarkCh
+	seperator := pgTypeList[pgType].Seperator
+	chRemain := pgTypeList[pgType].RemainCh	
+	endTxt := pgTypeList[pgType].BucketEnd
+
+	remainTxt := ""
+
+	if currPercent >= totalPercent{
+		return beginTxt+strings.Repeat(chCurrent, txtWidth)+endTxt
+	}
+
+	curCnt := CallTextAppend(txtWidth, currPercent)
+	remainCnt := txtWidth - curCnt - len(seperator)
+	currTxt := strings.Repeat(chCurrent, curCnt)
+	if remainCnt > 0{
+		remainTxt =  strings.Repeat(chRemain, remainCnt)	
+	}
+
+	return beginTxt+currTxt+seperator+remainTxt+endTxt
 }
 
 func GetWinsize() *unix.Winsize{
@@ -139,8 +136,8 @@ func GetWinsize() *unix.Winsize{
 	}
 	return ws 
 }
-func CallTextAppend(txtLen float64, percent float64) int{	
-	v := (percent/100)*txtLen
+func CallTextAppend(txtLen int, percent float64) int{	
+	v := (percent/100)*float64(txtLen)
 	return int(v)
 }
 
