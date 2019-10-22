@@ -11,7 +11,22 @@ func TestSimpleProgressBarType0(t *testing.T){
 	if pgb != nil{
 	}		
 
-	pgb.SetStyle(PGTYPE_BLOCK2)
+	pgb.SetStyle(PGTYPE_BLOCK1)
+	pgb.Total = 100;
+	for i:=0; i< 10; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+10)
+		time.Sleep(100 * time.Millisecond)
+	}
+	pgb.End()
+	fmt.Println("progress completed")	
+}
+
+func TestSimpleProgressBarType1(t *testing.T){
+	pgb := New()
+	if pgb != nil{
+	}		
+
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -21,12 +36,12 @@ func TestSimpleProgressBarType0(t *testing.T){
 	pgb.End()
 	fmt.Println("Completed")	
 }
-
-func TestSimpleProgressBarType1(t *testing.T){
+func TestSimpleProgressBarType2(t *testing.T){
 	pgb := New()
 	if pgb != nil{
 	}		
 
+	pgb.SetStyle(PGTYPE_BLOCK2)
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -172,7 +187,7 @@ func TestShowPreloadingText(t *testing.T){
 	}
 	filename := "readme.txt"
 	pgb.SetPreText(filename)
-	pgb.SetStyle(PGTYPE_BLOCK)
+	pgb.SetStyle(PGTYPE_BLOCK2)
 	pgb.Total =  100
 	pgb.SetCurrent(0)
 	for i:=0; i< 100; i++{
