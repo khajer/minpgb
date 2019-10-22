@@ -15,18 +15,18 @@ var pgTypeList []ProgressbarType
 var pgPreText string
 
 type ProgressbarType struct {
-	MarkCh, Seperator, RemainCh string
-	BucketBegin, BucketEnd 		string
-	
+	BucketBegin, MarkCh, Seperator, RemainCh, BucketEnd string	
 }
 
 const (
 	MAX_PERCENT float64 = 100
 	CH_RESET_LINE string = "\r\033[K"	
+)
 
-	PGTYPE_NORMAL int = 0
-	PGTYPE_BLOCK  int = 1
-
+const (
+	PGTYPE_NORMAL int = iota
+	PGTYPE_BLOCK
+	PGTYPE_BLOCK2
 )
 
 
@@ -43,23 +43,12 @@ func init(){
 	pgPreText = ""
 }
 
-func CreateProgressTypeList(){
-	pgTypeList = make([]ProgressbarType, 2)
-	
-	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{
-		BucketBegin: "[",
-		MarkCh:"#",
-		Seperator:"",
-		RemainCh:" ",		
-		BucketEnd:"]",
-	}
-	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{
-		BucketBegin: "|",
-		MarkCh:"▓",
-		Seperator:"▒",
-		RemainCh:" ",		
-		BucketEnd:"|",
-	}					
+func CreateProgressTypeList(){	
+
+	pgTypeList = make([]ProgressbarType, PGTYPE_BLOCK2+1)		
+	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{"[", "#", " ", " ", "]"}
+	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{"|", "▓", "▒", " ", "|"}
+	pgTypeList[PGTYPE_BLOCK2] = ProgressbarType{"|", "▓", "▒", "░", "|"}
 }
 
 func New() *MinPgb{

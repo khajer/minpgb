@@ -11,6 +11,22 @@ func TestSimpleProgressBarType0(t *testing.T){
 	if pgb != nil{
 	}		
 
+	pgb.SetStyle(PGTYPE_BLOCK2)
+	pgb.Total = 100;
+	for i:=0; i< 10; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+10)
+		time.Sleep(100 * time.Millisecond)
+	}
+	pgb.End()
+	fmt.Println("Completed")	
+}
+
+func TestSimpleProgressBarType1(t *testing.T){
+	pgb := New()
+	if pgb != nil{
+	}		
+
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
