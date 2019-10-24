@@ -91,28 +91,6 @@ func TestGetWinsize(t *testing.T){
 	
 }
 
-// func TestProgressBarLength(t *testing.T){
-	// str := CreateProgressText(0, 100, 100)	
-	// if len(str) != 102 {
-	// 	t.Errorf("fails len text(%d) != 102", len(str))
-	// }
-
-	// for i:=0; i< 100; i++{
-	// 	str = CreateProgressText(float64(i), 100, 100)	
-	// 	if len(str) != 102+(i*2) {
-	// 		t.Errorf("fails %d ", len(str))
-	// 		fmt.Println(str)
-	// 	}	
-	// }	
-
-	// for i:=0; i<100; i++{
-	// 	str := CreateProgressText(float64(i), 100, 100)	
-	// 	if len(str) != 102 {
-	// 		t.Errorf("fails len text(%d) != 102", len(str))
-	// 	}
-	// }	
-// }
-
 func TestCallTextAppend(t *testing.T){
 	if 50 != CallTextAppend(100, 50){
 		t.Errorf("Calculate Value Fails ")
@@ -179,15 +157,15 @@ func TestCreatePreLoadingText(t *testing.T){
 	if str != "readme.txt [100/100]" {
 		t.Errorf("String Prefix error : '%s'", str)
 	}
-
 }
+
 func TestShowPreloadingText(t *testing.T){
 	pgb := New()
 	if pgb != nil{
 	}
 	filename := "readme.txt"
 	pgb.SetPreText(filename)
-	pgb.SetStyle(PGTYPE_BLOCK2)
+	pgb.SetStyle(PGTYPE_ARROW)
 	pgb.Total =  100
 	pgb.SetCurrent(0)
 	for i:=0; i< 100; i++{
