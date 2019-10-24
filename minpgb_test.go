@@ -11,7 +11,7 @@ func TestSimpleProgressBarType0(t *testing.T){
 	if pgb != nil{
 	}		
 
-	pgb.SetStyle(PGTYPE_BLOCK1)
+	pgb.SetStyle(PGTYPE_DOT)
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
