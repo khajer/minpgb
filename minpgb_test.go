@@ -11,7 +11,22 @@ func TestSimpleProgressBarType0(t *testing.T){
 	if pgb != nil{
 	}		
 
-	pgb.SetStyle(PGTYPE_BLOCK2)
+	pgb.SetStyle(PGTYPE_DOT)
+	pgb.Total = 100;
+	for i:=0; i< 10; i++{
+		curr := pgb.GetCurrent()
+		pgb.SetCurrent(curr+10)
+		time.Sleep(100 * time.Millisecond)
+	}
+	pgb.End()
+	fmt.Println("progress completed")	
+}
+
+func TestSimpleProgressBarType1(t *testing.T){
+	pgb := New()
+	if pgb != nil{
+	}		
+
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -21,12 +36,12 @@ func TestSimpleProgressBarType0(t *testing.T){
 	pgb.End()
 	fmt.Println("Completed")	
 }
-
-func TestSimpleProgressBarType1(t *testing.T){
+func TestSimpleProgressBarType2(t *testing.T){
 	pgb := New()
 	if pgb != nil{
 	}		
 
+	pgb.SetStyle(PGTYPE_BLOCK2)
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -75,28 +90,6 @@ func TestGetWinsize(t *testing.T){
 	}
 	
 }
-
-// func TestProgressBarLength(t *testing.T){
-	// str := CreateProgressText(0, 100, 100)	
-	// if len(str) != 102 {
-	// 	t.Errorf("fails len text(%d) != 102", len(str))
-	// }
-
-	// for i:=0; i< 100; i++{
-	// 	str = CreateProgressText(float64(i), 100, 100)	
-	// 	if len(str) != 102+(i*2) {
-	// 		t.Errorf("fails %d ", len(str))
-	// 		fmt.Println(str)
-	// 	}	
-	// }	
-
-	// for i:=0; i<100; i++{
-	// 	str := CreateProgressText(float64(i), 100, 100)	
-	// 	if len(str) != 102 {
-	// 		t.Errorf("fails len text(%d) != 102", len(str))
-	// 	}
-	// }	
-// }
 
 func TestCallTextAppend(t *testing.T){
 	if 50 != CallTextAppend(100, 50){
@@ -164,15 +157,15 @@ func TestCreatePreLoadingText(t *testing.T){
 	if str != "readme.txt [100/100]" {
 		t.Errorf("String Prefix error : '%s'", str)
 	}
-
 }
+
 func TestShowPreloadingText(t *testing.T){
 	pgb := New()
 	if pgb != nil{
 	}
 	filename := "readme.txt"
 	pgb.SetPreText(filename)
-	pgb.SetStyle(PGTYPE_BLOCK)
+	pgb.SetStyle(PGTYPE_ARROW)
 	pgb.Total =  100
 	pgb.SetCurrent(0)
 	for i:=0; i< 100; i++{

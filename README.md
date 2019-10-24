@@ -1,7 +1,8 @@
+
 # minpgb
 minpgb is a mini progress bar cli 
 
-## install 
+## Install 
 ``` go get -u github.com/khajer/minpgb ```
 
 ## example
@@ -22,15 +23,16 @@ func main(){
 		pb.SetCurrent(curr+1)
 		time.Sleep(100 * time.Millisecond)
 	}
+	pg.End()
 
 }
 ```
-
-if you want to clear progress bar when 100% completed 
-```
+if you want to clear progress bar when 100% completed  
+```	
+	//pg.End()
 	pb.Flush()
 ```
-example
+### example
 ```
 package main
 
@@ -54,6 +56,16 @@ func main(){
 
 }
 ```
+
+## can set progress bar type
+
+ - PGTYPE_NORMAL 
+ - PGTYPE_BLOCK
+ - PGTYPE_BLOCK1
+ - PGTYPE_BLOCK2
+
+```	pgb.SetStyle(PGTYPE_BLOCK1)	```
+
 
 
 ## screenshot
