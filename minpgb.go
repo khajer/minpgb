@@ -30,6 +30,7 @@ const (
 	PGTYPE_BLOCK
 	PGTYPE_BLOCK1
 	PGTYPE_BLOCK2
+	PGTYPE_BEER
 )
 
 type MinPgb struct{
@@ -47,13 +48,14 @@ func init(){
 
 func CreateProgressTypeList(){	
 
-	pgTypeList = make([]ProgressbarType, PGTYPE_BLOCK2+1)		
+	pgTypeList = make([]ProgressbarType, PGTYPE_BEER+1)		
 	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{"[", "#", " ", " ", "]"}
 	pgTypeList[PGTYPE_ARROW] = ProgressbarType{"[", "=", ">", " ", "]"}
 	pgTypeList[PGTYPE_DOT] = ProgressbarType{"[", ".", "", " ", "]"}
 	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{"|", "▓", "▒", " ", "|"}
 	pgTypeList[PGTYPE_BLOCK1] = ProgressbarType{"", "█", "▒", "░", ""}
 	pgTypeList[PGTYPE_BLOCK2] = ProgressbarType{"|", "▓", "▒", "░", "|"}
+	pgTypeList[PGTYPE_BEER] = ProgressbarType{"|", "=", "🍺", "-", "|"}
 }
 
 func New() *MinPgb{
