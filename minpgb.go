@@ -16,18 +16,34 @@ var pgPreText string
 
 type ProgressbarType struct {
 	BucketBegin, MarkCh, Seperator, RemainCh, BucketEnd string	
+	CurrColor, RemainColor string
 }
 
 const (
 	MAX_PERCENT float64 = 100
-	CH_RESET_LINE string = "\r\033[K"	
-)
+
+	CH_RESET_LINE 			string = "\r\033[K"	
+
+	CH_COLOR_RED			string = "\033[0;31m"
+	CH_COLOR_GREEN			string = "\033[0;32m"	
+	CH_COLOR_YELLOW			string = "\033[0;33m"
+	CH_COLOR_BLUE			string = "\033[0;34m"
+	CH_COLOR_PURPLE			string = "\033[0;35m"
+	CH_COLOR_CYAN			string = "\033[0;36m"
+	CH_COLOR_WHITE			string = "\033[0;37m"
+
+	CH_COLOR_LIGHT_RED		string = "\033[1;31m"
+	
+	CH_COLOR_NO_COLOUR		string = "\033[0m"
+									   
+)	
 
 const (
 	PGTYPE_NORMAL int = iota
 	PGTYPE_ARROW
 	PGTYPE_DOT
 	PGTYPE_BLOCK
+	PGTYPE_B1
 	PGTYPE_BLOCK1
 	PGTYPE_BLOCK2
 	PGTYPE_BEER
@@ -49,13 +65,15 @@ func init(){
 func CreateProgressTypeList(){	
 
 	pgTypeList = make([]ProgressbarType, PGTYPE_BEER+1)		
-	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{"[", "#", " ", " ", "]"}
-	pgTypeList[PGTYPE_ARROW] = ProgressbarType{"[", "=", ">", " ", "]"}
-	pgTypeList[PGTYPE_DOT] = ProgressbarType{"[", ".", "", " ", "]"}
-	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{"|", "▓", "▒", " ", "|"}
-	pgTypeList[PGTYPE_BLOCK1] = ProgressbarType{"", "█", "▒", "░", ""}
-	pgTypeList[PGTYPE_BLOCK2] = ProgressbarType{"|", "▓", "▒", "░", "|"}
-	pgTypeList[PGTYPE_BEER] = ProgressbarType{"|", "=", "🍺", "-", "|"}
+	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{"[", "#", " ", " ", "]", "", ""}
+	pgTypeList[PGTYPE_ARROW] = ProgressbarType{"[", "=", ">", " ", "]", "", ""}
+	pgTypeList[PGTYPE_DOT] = ProgressbarType{"[", ".", "", " ", "]", "", ""}
+	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{"|", "▓", "▒", " ", "|", "", ""}
+	pgTypeList[PGTYPE_B1] = ProgressbarType{"[", "|", "|", "-", "]", "", ""}
+	pgTypeList[PGTYPE_BLOCK1] = ProgressbarType{"", "█", "▒", "░", "", "", ""}
+	pgTypeList[PGTYPE_BLOCK2] = ProgressbarType{"|", "▓", "▒", "░", "|", "", ""}
+	pgTypeList[PGTYPE_BEER] = ProgressbarType{"|", "=", "🍺", "-", "|", "", ""}
+
 }
 
 func New() *MinPgb{
@@ -67,24 +85,28 @@ func (pgb *MinPgb)GetCurrent() float64{
 	return pgb.Curr
 }
 func (pgb *MinPgb)SetCurrent(curr float64){
-	pgb.Curr = curr
 
-	fmt.Print(CH_RESET_LINE)	
+	pgb.Curr = curr
 	currPercent := pgb.Curr/pgb.Total*MAX_PERCENT	
 		
 	strHead := CreatePreLoadingText(pgPreText, pgb.Curr, pgb.Total)
-	strEnd := fmt.Sprintf(" %2.2f%s", currPercent, "%")
+	strEnd := fmt.Sprintf(" %3.2f%s", currPercent, "%")
 
 	col := uint16(MAX_PERCENT)
 	if winsize != nil{
 		col = winsize.Col
 	}
-	spacer := 4
-	pgbWidth := int(col) - (len(strHead)+len(strEnd)+spacer) 
 
+	pgbWidth := int(col) - len(strHead) - len(strEnd)
 	sProgress := CreateProgressText(currPercent, MAX_PERCENT, pgbWidth)	
-	fmt.Printf("%s %s %s", strHead, sProgress, strEnd)		
+
+	// process 
+	fmt.Print(CH_RESET_LINE)		
+
+	fmt.Printf("%s%s%s", strHead, sProgress, strEnd)
+
 }
+
 func (pgb *MinPgb)SetPreText(pretext string){
 	pgPreText = pretext
 }
@@ -111,18 +133,21 @@ func CreateProgressText(currPercent float64, totalPercent float64, txtWidth int)
 
 	remainTxt := ""
 
+	TxtLenAll := txtWidth - len(beginTxt) - len(endTxt)
 	if currPercent >= totalPercent{
-		return beginTxt+strings.Repeat(chCurrent, txtWidth)+endTxt
+		return beginTxt+strings.Repeat(chCurrent, TxtLenAll)+endTxt
 	}
 
-	curCnt := CallTextAppend(txtWidth, currPercent)
-	remainCnt := txtWidth - curCnt - len(seperator)
+	curCnt := CallTextAppend(TxtLenAll, currPercent)
+	remainCnt := TxtLenAll - curCnt - len(seperator)
 	currTxt := strings.Repeat(chCurrent, curCnt)
 	if remainCnt > 0{
 		remainTxt =  strings.Repeat(chRemain, remainCnt)	
 	}
 
-	return beginTxt+currTxt+seperator+remainTxt+endTxt
+	pgtxt := currTxt+seperator+remainTxt
+
+	return beginTxt+pgtxt+endTxt
 }
 
 func GetWinsize() *unix.Winsize{
@@ -141,5 +166,5 @@ func CreatePreLoadingText(pretext string, curr float64, total float64) string{
 	if len(pretext) > 0 {
 		pretext += " "
 	}
-	return fmt.Sprintf("%s[%.0f/%.0f]", pretext, curr, total)
+	return fmt.Sprintf("%s[%3.0f/%3.0f]", pretext, curr, total)
 }
