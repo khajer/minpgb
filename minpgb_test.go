@@ -11,7 +11,7 @@ func TestSimpleProgressBarType0(t *testing.T){
 	if pgb != nil{
 	}		
 
-	pgb.SetStyle(PGTYPE_DOT)
+	pgb.SetStyle(PGTYPE_B1)
 	pgb.Total = 100;
 	for i:=0; i< 10; i++{
 		curr := pgb.GetCurrent()
@@ -21,6 +21,7 @@ func TestSimpleProgressBarType0(t *testing.T){
 	pgb.End()
 	fmt.Println("progress completed")	
 }
+
 
 func TestSimpleProgressBarType1(t *testing.T){
 	pgb := New()
@@ -139,15 +140,14 @@ func TestProgressBarMore501AndWithFush(t *testing.T){
 
 func TestCreateProgressText(t *testing.T){
 	txtLen100percent := 50
-	borderBeginEnd := 2
 	s := CreateProgressText(0, 100, txtLen100percent)
-	if len(s) != txtLen100percent+borderBeginEnd{
-		t.Errorf("Length txt error , curr len = %d", len(s))
+	if len(s) != txtLen100percent{
+		t.Errorf("Length txt error , curr len = %d, %d", len(s), txtLen100percent)
 	}
 	txtLen100percent = 30.00
 	s = CreateProgressText(0, 100, txtLen100percent)
-	if len(s) != txtLen100percent+borderBeginEnd{
-		t.Errorf("Length txt error , curr len = %d", len(s))
+	if len(s) != txtLen100percent{
+		t.Errorf("Length txt error , curr len = %d, %d", len(s), txtLen100percent)
 	}
 }
 
