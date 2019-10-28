@@ -69,9 +69,6 @@ func main(){
 
 
 ## screenshot
-
 ![alt text](https://user-images.githubusercontent.com/797258/66182419-354df200-e69f-11e9-88cb-9a339a81f7e0.png)
 
 
-## video
-[![asciicast](https://asciinema.org/a/inqEgyM51ewUhyW2g9QBxGnIn.svg)](https://asciinema.org/a/inqEgyM51ewUhyW2g9QBxGnIn)
