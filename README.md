@@ -60,9 +60,13 @@ func main(){
 ## can set progress bar type
 
  - PGTYPE_NORMAL 
+ - PGTYPE_ARROW
+ - PGTYPE_DOT
  - PGTYPE_BLOCK
+ - PGTYPE_B1
  - PGTYPE_BLOCK1
  - PGTYPE_BLOCK2
+ - PGTYPE_BEER
 
 ```	pgb.SetStyle(PGTYPE_BLOCK1)	```
 
