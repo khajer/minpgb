@@ -5,15 +5,12 @@ import (
 	"golang.org/x/sys/unix"
 	"os"
 	"strings"
-
 )
 
 var pgb *MinPgb
 var winsize *unix.Winsize
-var pgType int
-var pgTypeList []ProgressbarType
-var pgPreText string
 
+var pgPreText string
 
 type MinPgb struct{
 	Curr, Total 	float64
@@ -28,19 +25,6 @@ func init(){
 	pgPreText = ""
 }
 
-func CreateProgressTypeList(){	
-
-	pgTypeList = make([]ProgressbarType, PGTYPE_BEER+1)		
-	pgTypeList[PGTYPE_NORMAL] = ProgressbarType{"[", "#", " ", " ", "]", "", ""}
-	pgTypeList[PGTYPE_ARROW] = ProgressbarType{"[", "=", ">", " ", "]", "", ""}
-	pgTypeList[PGTYPE_DOT] = ProgressbarType{"[", ".", "", " ", "]", "", ""}
-	pgTypeList[PGTYPE_BLOCK] = ProgressbarType{"|", "▓", "▒", " ", "|", "", ""}
-	pgTypeList[PGTYPE_B1] = ProgressbarType{"[", "|", "|", "-", "]", "", ""}
-	pgTypeList[PGTYPE_BLOCK1] = ProgressbarType{"", "█", "▒", "░", "", "", ""}
-	pgTypeList[PGTYPE_BLOCK2] = ProgressbarType{"|", "▓", "▒", "░", "|", "", ""}
-	pgTypeList[PGTYPE_BEER] = ProgressbarType{"|", "=", "🍺", "-", "|", "", ""}
-
-}
 
 func New() *MinPgb{
 	pg := new(MinPgb)	
