@@ -23,7 +23,7 @@ func main(){
 		pb.SetCurrent(curr+1)
 		time.Sleep(100 * time.Millisecond)
 	}
-	pg.End()
+	pb.End()
 
 }
 ```
